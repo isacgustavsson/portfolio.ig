@@ -1,0 +1,14 @@
+<div class="nav">
+  <h1>isac gustavsson</h1>
+</div>
+
+<ul id="navItems">
+  <li><a href="/"> <p>Home.</p> </a></li>
+  <li><a href="/work"> <p>Work.</p> </a></li>
+  <li><a href="/contact"> <p>Contact.</p> </a></li>
+  {{#if isLoggedIn}}
+    <li><a href="/logout">Logout.</a></li>
+  {{else}}
+    <li><a href="/login"> <p>Login.</p> </a></li>
+  {{/if}}
+</ul>
