@@ -1,0 +1,58 @@
+<div class="container">
+    <div>
+  <h1>Edit Project.</h1>
+  <div>
+    {{#if isLoggedIn}}
+      {{#if isAdmin}}
+        <form action="/work/edit/{{workItems.wid}}" method="post">
+          <fieldset>
+            <label for="wname">Project name:</label>
+            <input
+              type="text"
+              id="wname"
+              name="wname"
+              value="{{workItems.wname}}"
+              required="required"
+            />
+            <br />
+            <textarea
+              name="wdesc"
+              id="wdesc"
+              cols="30"
+              rows="10"
+              required="required"
+            >{{workItems.wdesc}}</textarea>
+            <br />
+            <label for="wtype">Project Type:</label>
+            <select id="wtype" name="wtype" required="required">
+              <option value="web"{{#if (theTypeW workItem.wtype)}} selected="selected"{{/if}} >Web Development.</option>
+              <option value="game"{{#if (theTypeG workItem.wtype)}} selected="selected"{{/if}}>Game Development.</option>
+              <option value="design"{{#if (theTypeD workItem.wtype)}} selected="selected"{{/if}}>Graphic Design.</option>
+              <option value="uxd"{{#if (theTypeU workItem.wtype)}} selected="selected"{{/if}}>User Experience Design.</option>
+            </select>
+            <br />
+            <label for="wimg">Project image URL:</label>
+            <input
+              type="text"
+              id="wimg"
+              name="wimg"
+              placeholder="/img/"
+              value="{{workItems.wimg}}"
+              required="required"
+            />
+            <br />
+          </fieldset>
+          <input type="submit" value="Edit Project." />
+        </form>
+      {{else}}
+        <p>sorry, only cool people can add new projects.</p>
+      {{/if}}
+    {{else}}
+      <p>login required.
+        <br />
+        <a href="/login">login.</a></p>
+    {{/if}}
+  </div>
+</div>
+</div>
+</div>
