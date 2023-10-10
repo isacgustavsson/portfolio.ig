@@ -1,7 +1,10 @@
-<div class="container">
-    <div>
-  <h1>Edit Project.</h1>
-  <div>
+<div class="container" id="editContainer">
+  <div id="editBox0"></div>
+  <h1 id="editHead" >Edit Project.</h1>
+  <div id="editBox1"></div>
+  <div id="editBox2"></div>
+
+      <div class="form">
     {{#if isLoggedIn}}
       {{#if isAdmin}}
         <form action="/work/edit/{{workItems.wid}}" method="post">
@@ -52,7 +55,6 @@
         <br />
         <a href="/login">login.</a></p>
     {{/if}}
+    </div>
   </div>
-</div>
-</div>
 </div>

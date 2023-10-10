@@ -5,6 +5,7 @@ const bodyParser = require("body-parser"); // loads the body-parser package
 const session = require("express-session");
 const connectSqlite3 = require("connect-sqlite3");
 const cookieParser = require("cookie-parser");
+const bcrypt = require("bcrypt");
 
 const db = new sqlite3.Database("portfolio-ig.db");
 
@@ -24,7 +25,7 @@ app.use(express.static("public"));
 //-----------
 // Post Forms
 //-----------
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //-----------
@@ -43,6 +44,69 @@ app.use(
     secret: "J@ghar3nhår1gkatt$0mh3t3rFran$&Är6294192674034156294årqammaL",
   })
 );
+
+app.post("/register", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  bcrypt.hash(password, 15, (error, hash) => {
+    if (error) {
+      console.log("ERROR ", error);
+      res.redirect("/register");
+    } else {
+      db.run(
+        "CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL, password TEXT NOT NULL)",
+        (error) => {
+          if (error) {
+            console.log("ERROR ", error);
+          } else {
+            console.log(" --> users table created!");
+
+            db.run(
+              "INSERT INTO users (username, password) VALUES (?,?)",
+              [username, hash],
+              (error) => {
+                if (error) {
+                  console.log("ERROR ", error);
+                } else {
+                  console.log(" --> user registration successful!");
+                  res.redirect("/login");
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+  });
+});
+
+// check the login and password of a user.
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  db.get("SELECT * FROM users WHERE username=?", [username], (error, user) => {
+    if (error || !user) {
+      console.log("ERROR ", "user not found");
+      res.redirect("/login");
+    } else {
+      bcrypt.compare(password, user.password, (error, result) => {
+        if (error) {
+          console.log("ERROR ", error);
+        } else if (result) {
+          console.log("welcome back, " + username + "...");
+          req.session.isLoggedIn = true;
+          req.session.name = username;
+          res.redirect("/");
+        } else {
+          console.log("ERROR ", "incorrect password");
+          res.redirect("/login");
+        }
+      });
+    }
+  });
+});
 
 db.run(
   "CREATE TABLE workItems (wid INTEGER PRIMARY KEY, wname TEXT NOT NULL, wdesc TEXT NOT NULL, wtype TEXT NOT NULL, wimgURL TEXT NOT NULL)",
@@ -286,24 +350,9 @@ app.get("/login", (req, res) => {
   res.render("login.handlebars", model);
 });
 
-// check the login and password of a user.
-app.post("/login", (req, res) => {
-  const un = req.body.un;
-  const pw = req.body.pw;
-
-  if (un == "admin" && pw == "0000") {
-    console.log("welcome back admin...");
-    req.session.isAdmin = true;
-    req.session.isLoggedIn = true;
-    req.session.name = "admin";
-    res.redirect("/");
-  } else {
-    console.log("invalid login. computer will self destruct in 5 seconds...");
-    req.session.isAdmin = false;
-    req.session.isLoggedIn = false;
-    req.session.name = "";
-    res.redirect("/login");
-  }
+app.get("/register", (req, res) => {
+  const model = {};
+  res.render("register.handlebars", model);
 });
 
 app.get("/newp", (req, res) => {
