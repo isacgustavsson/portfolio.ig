@@ -45,7 +45,7 @@ body {
   display: flex;
   justify-content: center;
   padding: 0.5rem;
-  background-color: rgb(0, 0, 0, 0.9);
+  background-color: rgb(0, 0, 0, 0.8);
 
   position: fixed;
   width: 100%;
@@ -556,6 +556,20 @@ a#newp {
   grid-row: 6 / 12;
   padding: 1rem;
   background-color: #297373;
+}
+
+/* Pagination */
+
+#page {
+  background-color: #39393a;
+}
+
+#prev {
+  background-color: #39393a;
+}
+
+#next {
+  background-color: #39393a;
 }
 
 .form input[type="password"] {

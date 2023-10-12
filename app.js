@@ -49,13 +49,13 @@ app.post("/register", (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  bcrypt.hash(password, 15, (error, hash) => {
+  bcrypt.hash(password, 10, (error, hash) => {
     if (error) {
       console.log("ERROR ", error);
       res.redirect("/register");
     } else {
       db.run(
-        "CREATE TABLE IF NOT EXISTS users (username TEXT NOT NULL, password TEXT NOT NULL)",
+        "CREATE TABLE IF NOT EXISTS users (userid INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL, password TEXT NOT NULL)",
         (error) => {
           if (error) {
             console.log("ERROR ", error);
@@ -63,7 +63,7 @@ app.post("/register", (req, res) => {
             console.log(" --> users table created!");
 
             db.run(
-              "INSERT INTO users (username, password) VALUES (?,?)",
+              "INSERT INTO users ( username, password) VALUES (?,?)",
               [username, hash],
               (error) => {
                 if (error) {
@@ -98,6 +98,7 @@ app.post("/login", (req, res) => {
           console.log("welcome back, " + username + "...");
           req.session.isLoggedIn = true;
           req.session.name = username;
+          req.session.isAdmin = username == "webmastr";
           res.redirect("/");
         } else {
           console.log("ERROR ", "incorrect password");
@@ -109,7 +110,7 @@ app.post("/login", (req, res) => {
 });
 
 db.run(
-  "CREATE TABLE workItems (wid INTEGER PRIMARY KEY, wname TEXT NOT NULL, wdesc TEXT NOT NULL, wtype TEXT NOT NULL, wimgURL TEXT NOT NULL)",
+  "CREATE TABLE workItems (wid INTEGER PRIMARY KEY AUTOINCREMENT, wname TEXT NOT NULL, wdesc TEXT NOT NULL, wtype TEXT NOT NULL, wimgURL TEXT NOT NULL)",
   (error) => {
     if (error) {
       console.log("ERROR ", error);
@@ -118,7 +119,6 @@ db.run(
 
       const workItems = [
         {
-          id: "0",
           name: "Web Development",
           desc: "Web Development Description",
           type: "web",
@@ -126,7 +126,6 @@ db.run(
         },
 
         {
-          id: "1",
           name: "Game Development",
           desc: "Game Development Description",
           type: "game",
@@ -134,7 +133,6 @@ db.run(
         },
 
         {
-          id: "2",
           name: "Graphic Design",
           desc: "Graphic Design Description",
           type: "graphic",
@@ -142,7 +140,6 @@ db.run(
         },
 
         {
-          id: "3",
           name: "User Experience Design",
           desc: "UX Design Description",
           type: "ux",
@@ -152,8 +149,8 @@ db.run(
 
       workItems.forEach((item) => {
         db.run(
-          "INSERT INTO workItems (wid, wname, wdesc, wtype, wimgURL) VALUES (?,?,?,?,?)",
-          [item.id, item.name, item.desc, item.type, item.img],
+          "INSERT INTO workItems (wname, wdesc, wtype, wimgURL) VALUES (?,?,?,?)",
+          [item.name, item.desc, item.type, item.img],
           (error) => {
             if (error) {
               console.log("ERROR ", error);
@@ -183,7 +180,7 @@ app.get("/work", function (req, res) {
   db.all("SELECT * FROM workItems", function (error, theWorkItems) {
     if (error) {
       const model = {
-        hasDatabaseError: true,
+        dbError: true,
         theError: error,
         workItems: [],
         isLoggedIn: req.session.isLoggedIn,
@@ -193,7 +190,7 @@ app.get("/work", function (req, res) {
       res.render("work.handlebars", model);
     } else {
       const model = {
-        hasDatabaseError: false,
+        dbError: false,
         theError: "",
         workItems: theWorkItems,
         isLoggedIn: req.session.isLoggedIn,
@@ -208,21 +205,14 @@ app.get("/work", function (req, res) {
 app.get("/work/:id", (req, res) => {
   const id = req.params.id;
 
-  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
-    db.get(
-      "SELECT * FROM workItems WHERE wid=?",
-      [id],
-      function (error, workItem) {
-        if (error) {
-          res.redirect("/");
-        } else {
-          res.render("workItems.handlebars", { wi: workItem });
-        }
-      }
-    );
-  } else {
-    res.redirect("/login");
-  }
+  db.get("SELECT * FROM workItems WHERE wid=?", [id], (error, workItem) => {
+    if (error) {
+      console.log("Error: ", error);
+      res.redirect("/");
+    } else {
+      res.render("workItems.handlebars", { wi: workItem });
+    }
+  });
 });
 
 //delete a work item.
@@ -269,7 +259,7 @@ app.get("/work/edit/:id", (req, res) => {
       if (error) {
         console.log("ERROR ", error);
         const model = {
-          hasDatabaseError: true,
+          dbError: true,
           theError: error,
           workItems: {},
           isLoggedIn: req.session.isLoggedIn,
@@ -281,7 +271,7 @@ app.get("/work/edit/:id", (req, res) => {
         console.log("MODIFY: ", JSON.stringify(workItems));
         console.log("MODIFY: ", workItems);
         const model = {
-          hasDatabaseError: false,
+          dbError: false,
           theError: "",
           workItems: workItems,
           isLoggedIn: req.session.isLoggedIn,
@@ -346,7 +336,11 @@ app.get("/contact", function (req, res) {
 });
 
 app.get("/login", (req, res) => {
-  const model = {};
+  const model = {
+    isLoggedIn: req.session.isLoggedIn,
+    name: req.session.name,
+    isAdmin: req.session.isAdmin,
+  };
   res.render("login.handlebars", model);
 });
 
