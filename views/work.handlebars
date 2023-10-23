@@ -1,14 +1,10 @@
-<div class="container" id="work-container">
-
-  <div id="workhead-1">
-  </div>
-
-  <div id="workhead">
+    <div id="workHead" class="container">
     <h1>Work.</h1>
-  </div>
+    <p>Below are various projects that I have worked on.</p>
+    </div>
 
   {{#if isAdmin}}
-      <a id="newp" href="/newp">new project.</a>
+      <a id="newp" href="/newp"><h3>new project.</h3></a>
   {{/if}}
 
   {{#if hasDatabaseError}}
@@ -18,23 +14,29 @@
       {{theError}}
     </div>
   {{else}}
+
+      <div class="cardWrapper">
     {{#each workItems}}
+    <div class="card">
       <div id="work{{wid}}">
-        <a href="work/{{wid}}">
-          {{wname}}
+        <a id="itemHead" href="work/{{wid}}">
+          <h4>{{wname}}</h4>
         </a>
 
+        <img src="{{wimgURL}}" alt="project image">
+
+        <p>{{wdesc}}</p>
+
             {{#if ../isAdmin}}
-            <div class="btn">
+            <div id="btn">
           <a href="/work/edit/{{wid}}">Edit.</a>
-          <a  href="/work/delete/{{wid}}" class="important">delete.</a>
+          <a  href="/work/delete/{{wid}}" class="important">Delete.</a>
           </div>
         {{/if}}
 
       </div>
+      </div>
     {{/each}}
+    </div>
 
   {{/if }}
-
-
-</div>

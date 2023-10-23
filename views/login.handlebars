@@ -1,30 +1,32 @@
-<div class="container" id="newpContainer">
+<div class="container">
+  <h1 id="logHead">Login.</h1>
+</div>
 
-  <div id="logBox0"></div>
-  <h1 id="logHead0">Login.</h1>
-  <div id="logBox1"></div>
+<div class="formWrapper">
+  <form id="logForm" class="form" action="/login" method="post">
+    <label for="username">Username</label>
+    <input
+      type="text"
+      id="username"
+      name="username"
+      placeholder="input required..."
+      required="required"
+    />
+    <label for="password">Password</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="input required..."
+      required="required"
+    />
+    <br />
+    <input type="submit" value="Login" />
+  </form>
+</div>
 
-  <div class="form" id="logForm0">
-    <form action="/login" method="post">
-      <fieldset>
-        <label for="username">username:</label>
-        <input type="text" id="username" name="username" required="required" />
-        <br />
-        <label for="password">password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required="required"
-        />
-        <br />
-      </fieldset>
-      <input type="submit" value="login" />
-    </form>
-  </div>
-
-  <div id="regBox">
-    <p>Don't have an account?</p>
-    <a href="/register">Register New User.</a>
-  </div>
+.
+<div id="regBox">
+  <h4>Don't have an account?</h4>
+  <a id="reglink" href="/register">Register New User here.</a>
 </div>

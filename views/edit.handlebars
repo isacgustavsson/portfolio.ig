@@ -1,14 +1,12 @@
-<div class="container" id="editContainer">
-  <div id="editBox0"></div>
+  <div class="container">
   <h1 id="editHead" >Edit Project.</h1>
-  <div id="editBox1"></div>
-  <div id="editBox2"></div>
+</div>
 
-      <div class="form">
+
+<div class="formWrapper">
     {{#if isLoggedIn}}
       {{#if isAdmin}}
-        <form action="/work/edit/{{workItems.wid}}" method="post">
-          <fieldset>
+        <form id="editForm" class="form" action="/work/edit/{{workItems.wid}}" method="post">
             <label for="wname">Project name:</label>
             <input
               type="text"
@@ -44,11 +42,10 @@
               required="required"
             />
             <br />
-          </fieldset>
           <input type="submit" value="Edit Project." />
         </form>
       {{else}}
-        <p>sorry, only cool people can add new projects.</p>
+        <p>sorry, only cool people can edit projects.</p>
       {{/if}}
     {{else}}
       <p>login required.
@@ -56,5 +53,4 @@
         <a href="/login">login.</a></p>
     {{/if}}
     </div>
-  </div>
-</div>
+

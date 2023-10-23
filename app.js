@@ -4,7 +4,6 @@ const sqlite3 = require("sqlite3");
 const bodyParser = require("body-parser"); // loads the body-parser package
 const session = require("express-session");
 const connectSqlite3 = require("connect-sqlite3");
-const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 
 const db = new sqlite3.Database("portfolio-ig.db");
@@ -117,36 +116,6 @@ db.run(
     } else {
       console.log(" --> workItems table created!");
 
-      const workItems = [
-        {
-          name: "Web Development",
-          desc: "Web Development Description",
-          type: "web",
-          img: 0,
-        },
-
-        {
-          name: "Game Development",
-          desc: "Game Development Description",
-          type: "game",
-          img: 1,
-        },
-
-        {
-          name: "Graphic Design",
-          desc: "Graphic Design Description",
-          type: "graphic",
-          img: 2,
-        },
-
-        {
-          name: "User Experience Design",
-          desc: "UX Design Description",
-          type: "ux",
-          img: 3,
-        },
-      ];
-
       workItems.forEach((item) => {
         db.run(
           "INSERT INTO workItems (wname, wdesc, wtype, wimgURL) VALUES (?,?,?,?)",
@@ -164,7 +133,108 @@ db.run(
   }
 );
 
-// CONTROLLER (THE BOSS)
+// CREATE A TABLE FOR GUESTBOOK //
+
+db.run(
+  "CREATE TABLE guestbook (gid INTEGER PRIMARY KEY AUTOINCREMENT, gname TEXT NOT NULL, gemail TEXT NOT NULL, gcomment TEXT NOT NULL, gdate TEXT)",
+  (error) => {
+    if (error) {
+      console.log("ERROR ", error);
+    } else {
+      console.log(" --> guestbook table created!");
+    }
+  }
+);
+
+// HANDLE GUESTBOOK FORM
+
+app.post("/submit-comment", (req, res) => {
+  // The code below that handles the date was generated with some help from Codeium AI //
+  const { name, email, comment } = req.body;
+  const currentDate = new Date();
+
+  const day = currentDate.getDate();
+  const month = currentDate.getMonth() + 1; // Months are zero-based, so add 1
+  const year = currentDate.getFullYear();
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
+
+  // Format the date as you desire
+  const formattedDate = `${day}/${month}/${year} ${hours}:${minutes}`;
+
+  db.run(
+    "INSERT INTO guestbook (gname, gemail, gcomment, gdate) VALUES (?,?,?,?)",
+    [name, email, comment, formattedDate],
+    (error) => {
+      if (error) {
+        console.log("ERROR ", error);
+        res.status(500).send("Internal Server Error");
+      } else {
+        console.log("comment successfully added!");
+      }
+    }
+  );
+
+  db.all("SELECT * FROM guestbook ORDER BY gdate DESC", (error, comments) => {
+    if (error) {
+      console.log("Error retrieving comments:", error);
+      res.status(500).send("Error retrieving comments");
+    } else {
+      console.log(comments);
+      res.render("home.handlebars", { comments });
+    }
+  });
+});
+
+app.get("/edit/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.get("SELECT * FROM guestbook WHERE gid=?", [id], (error, comment) => {
+    if (error) {
+      console.log("ERROR ", error);
+      res.render("/", model);
+    } else {
+      console.log("MODIFY: ", JSON.stringify(comment));
+      console.log("MODIFY: ", comment);
+      res.render("editCom.handlebars", { comment });
+    }
+  });
+});
+
+app.get("/delete/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.run("DELETE FROM guestbook WHERE gid=?", [id], (error) => {
+    if (error) {
+      console.log("ERROR: ", error);
+    } else {
+      console.log("Comment Deleted!");
+    }
+    res.redirect("/");
+  });
+});
+
+// POST request to update a guestbook comment
+app.post("/edit/:id", (req, res) => {
+  const id = req.params.id;
+  const updatedComment = req.body.comment;
+
+  db.run(
+    "UPDATE guestbook SET gcomment=? WHERE gid=?",
+    [updatedComment, id],
+    (error) => {
+      if (error) {
+        console.log("Error updating comment: ", error);
+      } else {
+        console.log("Comment updated!");
+      }
+      res.redirect("/");
+    }
+  );
+});
+
+// CONTROLLER (THE BOSS) //
+
 app.get("/", function (req, res) {
   console.log("SESSION: ", req.session);
 
@@ -173,8 +243,21 @@ app.get("/", function (req, res) {
     name: req.session.name,
     isAdmin: req.session.isAdmin,
   };
-  res.render("home.handlebars", model);
+
+  // RENDER GUESTBOOK POSTS ON HOMEPAGE //
+
+  db.all("SELECT * FROM guestbook ORDER BY gdate ASC", (error, comments) => {
+    if (error) {
+      console.log("Error retrieving comments:", error);
+      res.status(500).send("Error retrieving comments");
+    } else {
+      model.comments = comments;
+      res.render("home.handlebars", model);
+    }
+  });
 });
+
+// RETRIEVE & RENDER PROJECTS (workItems) //
 
 app.get("/work", function (req, res) {
   db.all("SELECT * FROM workItems", function (error, theWorkItems) {
@@ -202,6 +285,8 @@ app.get("/work", function (req, res) {
   });
 });
 
+// RETRIEVE ID FROM PROJECT (workItem) //
+
 app.get("/work/:id", (req, res) => {
   const id = req.params.id;
 
@@ -215,39 +300,7 @@ app.get("/work/:id", (req, res) => {
   });
 });
 
-//delete a work item.
-app.get("/work/delete/:id", (req, res) => {
-  const id = req.params.id;
-  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
-    db.run(
-      "DELETE FROM workItems WHERE wid=?",
-      [id],
-      function (error, workItems) {
-        if (error) {
-          const model = {
-            dbError: true,
-            theError: error,
-            isLoggedIn: req.session.isLoggedIn,
-            name: req.session.name,
-            isAdmin: req.session.isAdmin,
-          };
-          res.render("home.handlebars", model);
-        } else {
-          const model = {
-            dbError: false,
-            theError: "",
-            isLoggedIn: req.session.isLoggedIn,
-            name: req.session.name,
-            isAdmin: req.session.isAdmin,
-          };
-          res.render("home.handlebars", model);
-        }
-      }
-    );
-  } else {
-    res.redirect("/");
-  }
-});
+// EDIT PROJECT (workItem) //
 
 app.get("/work/edit/:id", (req, res) => {
   const id = req.params.id;
@@ -325,6 +378,43 @@ app.post("/work/edit/:id", (req, res) => {
   }
 });
 
+// DELETE PROJECT (workItem) //
+
+app.get("/work/delete/:id", (req, res) => {
+  const id = req.params.id;
+  if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
+    db.run(
+      "DELETE FROM workItems WHERE wid=?",
+      [id],
+      function (error, workItems) {
+        if (error) {
+          const model = {
+            dbError: true,
+            theError: error,
+            isLoggedIn: req.session.isLoggedIn,
+            name: req.session.name,
+            isAdmin: req.session.isAdmin,
+          };
+          res.render("home.handlebars", model);
+        } else {
+          const model = {
+            dbError: false,
+            theError: "",
+            isLoggedIn: req.session.isLoggedIn,
+            name: req.session.name,
+            isAdmin: req.session.isAdmin,
+          };
+          res.render("work.handlebars", model);
+        }
+      }
+    );
+  } else {
+    res.redirect("/");
+  }
+});
+
+// CONTACT PAGE //
+
 app.get("/contact", function (req, res) {
   const model = {
     isLoggedIn: req.session.isLoggedIn,
@@ -335,19 +425,7 @@ app.get("/contact", function (req, res) {
   res.render("contact.handlebars", model);
 });
 
-app.get("/login", (req, res) => {
-  const model = {
-    isLoggedIn: req.session.isLoggedIn,
-    name: req.session.name,
-    isAdmin: req.session.isAdmin,
-  };
-  res.render("login.handlebars", model);
-});
-
-app.get("/register", (req, res) => {
-  const model = {};
-  res.render("register.handlebars", model);
-});
+// NEW PROJECT //
 
 app.get("/newp", (req, res) => {
   if (req.session.isLoggedIn == true && req.session.isAdmin == true) {
@@ -385,6 +463,22 @@ app.post("/newp", (req, res) => {
   }
 });
 
+// LOGIN & LOGOUT SECTION //
+
+app.get("/login", (req, res) => {
+  const model = {
+    isLoggedIn: req.session.isLoggedIn,
+    name: req.session.name,
+    isAdmin: req.session.isAdmin,
+  };
+  res.render("login.handlebars", model);
+});
+
+app.get("/register", (req, res) => {
+  const model = {};
+  res.render("register.handlebars", model);
+});
+
 app.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     console.log("Something went wrong.", err);
@@ -393,12 +487,14 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// defines the final default route 404 NOT FOUND
+// defines the final default route 404 NOT FOUND //
+
 app.use(function (req, res) {
   res.status(404).render("404.handlebars");
 });
 
-// runs the app and listens to the port
+// runs the app and listens to the port //
+
 app.listen(port, () => {
   console.log(`Server running and listening on port ${port}...`);
 });
