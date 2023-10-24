@@ -1,0 +1,5 @@
+- name: web
+  buildCommand: npm install
+  startCommand: npm start
+  staticPublishPath: public
+  useDocker: false

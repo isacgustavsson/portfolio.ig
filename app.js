@@ -6,10 +6,14 @@ const session = require("express-session");
 const connectSqlite3 = require("connect-sqlite3");
 const bcrypt = require("bcrypt");
 
-const db = new sqlite3.Database("portfolio-ig.db");
+// const db = new sqlite3.Database("portfolio-ig.db");
+const db = new sqlite3.Database(
+  process.env.SQLITE_DB_PATH || "portfolio-ig.db"
+); // Use an environment variable for the SQLite DB path
 
 const app = express(); // creates the Express application
-const port = 8080; // defines the port
+// const port = 8080; // defines the port
+const port = process.env.PORT || 8080; // Use the PORT environment variable
 
 // defines handlebars engine
 app.engine("handlebars", engine());
