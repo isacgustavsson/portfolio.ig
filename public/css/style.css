@@ -12,6 +12,7 @@
   padding: 0;
   box-sizing: border-box;
   cursor: pointer;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -66,6 +67,7 @@ a {
   flex-direction: column;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
+  overflow-y: scroll;
 }
 
 /* *****************
@@ -82,9 +84,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
   padding: 1.5rem;
-  padding-top: 0.5rem;
 }
 
 #nav input[type="checkbox"] {
@@ -94,30 +94,39 @@ a {
   display: none;
 }
 
-#navItems h1 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 #navItems span {
   margin-left: 0.1rem;
 }
 
+@keyframes toggle {
+  from {
+    left: 100%;
+  }
+
+  to {
+    left: 50%;
+  }
+}
+
 #toggle:checked ~ #navItems {
   display: flex;
-  width: 50%;
+  width: 100%;
   height: 100%;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
+  align-items: flex-start;
   position: fixed;
   top: 50%;
-  left: 75%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 9999;
   background-color: #6f8695;
-
   padding: 1rem;
   list-style-type: none;
+
+  animation-name: toggle;
+  animation-duration: 0.25s;
+  animation-timing-function: ease;
 }
 
 #toggle:checked ~ .hamburger {
@@ -129,13 +138,20 @@ a {
   top: 0%;
   right: 0%;
   padding: 1rem;
-  font-size: 1rem;
+  font-size: 1.5rem;
 }
 
 .hamburger {
-  font-size: 2.5rem;
+  font-size: 3rem;
+  mix-blend-mode: hard-light;
   color: #1e1e24;
   cursor: pointer;
+
+  position: fixed;
+  top: 0%;
+  right: 0%;
+  margin-top: 0.5rem;
+  margin-right: 1rem;
 }
 
 /************************* 
@@ -453,10 +469,26 @@ a[id^="itemHead"] {
     grid-gap: 1.5em;
   }
 
+  @keyframes toggle {
+    from {
+      left: 100%;
+    }
+
+    to {
+      left: 88%;
+    }
+  }
+
   #toggle:checked ~ #navItems {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 3.75rem;
     height: 100%;
     width: 25%;
     left: 88%;
+    animation-name: toggle;
+    animation-duration: 0.1s;
+    animation-timing-function: ease-in-out;
   }
 
   #hero {
@@ -659,5 +691,18 @@ a[id^="itemHead"] {
   #editComForm {
     grid-column: 2 / 4;
     grid-row: 2 / 4;
+  }
+}
+
+@media screen and (min-width: 1366px) {
+  #heroHead img {
+    display: block;
+    position: absolute;
+    top: 15%;
+    right: 0%;
+
+    width: 100%; /* Adjust the maximum width as needed */
+    height: auto; /* Maintain aspect ratio */
+    scale: 0.75;
   }
 }
