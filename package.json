@@ -18,5 +18,7 @@
     "nodemon": "^3.0.1",
     "sqlite3": "^5.1.6"
   },
-  "devDependencies": {}
+  "trustedDependencies": [
+    "sqlite3"
+  ]
 }
