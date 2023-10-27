@@ -7,9 +7,11 @@ const connectSqlite3 = require("connect-sqlite3");
 const bcrypt = require("bcrypt");
 
 // const db = new sqlite3.Database("portfolio-ig.db");
-const db = new sqlite3.Database(
-  process.env.SQLITE_DB_PATH || "portfolio-ig.db"
-); // Use an environment variable for the SQLite DB path
+// const db = new sqlite3.Database(
+//   process.env.SQLITE_DB_PATH || "portfolio-ig.db"
+// ); // Use an environment variable for the SQLite DB path
+
+const db = new sqlite3.Database(":memory:");
 
 const app = express(); // creates the Express application
 // const port = 8080; // defines the port
@@ -119,11 +121,42 @@ db.run(
       console.log("ERROR ", error);
     } else {
       console.log(" --> workItems table created!");
-
+      workItems = [
+        {
+          wname: "Skeumorphic Design",
+          wdesc: "made this in Adobe Illustrator.",
+          wtype: "design",
+          wimgURL: "/img/camera.png",
+        },
+        {
+          wname: "Spinner",
+          wdesc: "Made this in illustrator specifically for the website.",
+          wtype: "design",
+          wimgURL: "/img/heroHead.png",
+        },
+        {
+          wname: "Typography Sun",
+          wdesc: "made this in Adobe Illustrator.",
+          wtype: "design",
+          wimgURL: "/img/camera.png",
+        },
+        {
+          wname: "Skeumorphic2 Design",
+          wdesc: "made this in Adobe Illustrator.",
+          wtype: "design",
+          wimgURL: "/img/camera.png",
+        },
+        {
+          wname: "Skeumorphic3 Design",
+          wdesc: "made this in Adobe Illustrator.",
+          wtype: "design",
+          wimgURL: "/img/camera.png",
+        },
+      ];
       workItems.forEach((item) => {
         db.run(
           "INSERT INTO workItems (wname, wdesc, wtype, wimgURL) VALUES (?,?,?,?)",
-          [item.name, item.desc, item.type, item.img],
+          [item.wname, item.wdesc, item.wtype, item.wimgURL],
           (error) => {
             if (error) {
               console.log("ERROR ", error);
