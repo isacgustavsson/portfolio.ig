@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Bitter&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@300&display=swap");
 
 /* *****************
 
@@ -26,17 +26,16 @@ h3,
 h4 {
   font-family: "Open Sans", sans-serif;
   color: #2f2f2f;
-  margin-bottom: 0.25rem;
 }
 
 h1 {
-  font-size: 2rem;
-  line-height: 1.25;
+  font-size: 2.125rem;
+  line-height: 2.55;
 }
 
 h2 {
-  font-size: 1.625rem;
-  line-height: 1.25;
+  font-size: 1.875rem;
+  line-height: 2.25;
 }
 
 h3 {
@@ -48,10 +47,11 @@ h4 {
 }
 
 p {
-  font-family: "Bitter", serif;
+  font-family: "MerriWeather", serif;
   font-size: 1rem;
-  line-height: 1.25;
+  line-height: 1.5;
   color: #272b2b;
+  max-width: 60ch;
 }
 
 a {
@@ -263,33 +263,32 @@ FORM SETTINGS
 .commentContainer {
   background-color: #6f8695;
   display: flex;
+  align-items: flex-start;
   flex-direction: column;
-  margin: 1.5rem;
-  padding: 1.5rem;
+  margin: 1rem;
+  padding: 1rem;
 
   overflow: hidden;
 }
 
-.commentContainer h3 {
+.commentContainer h4 {
   color: #1e1e24;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .commentContainer p {
-  color: #1e1e24;
-  line-height: 1.55;
-  max-width: 70ch;
+  max-width: 100%;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
 
-.commentContainer #nameDate {
-  display: flex;
-  justify-content: space-between;
+.commentContainer #date {
+  align-self: flex-end;
+  margin-top: 1rem;
 }
 
 .commentContainer:nth-last-child(1) {
-  margin-bottom: 10rem;
+  margin-bottom: 15rem;
 }
 
 .commentContainer #btn {
@@ -384,17 +383,15 @@ a[id^="itemHead"] {
   height: auto; /* Maintain aspect ratio */
 }
 
-#homeHead h2,
-#homeHead h3 {
-  margin-top: 1.5rem;
-}
-
 #homeHead {
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
-  max-width: 55ch;
   margin-bottom: 10rem;
+}
+
+#homeHead h1 {
+  margin-bottom: 0.05rem;
 }
 
 #newpHead {
@@ -530,6 +527,7 @@ a[id^="itemHead"] {
     grid-row: 4 / 6;
     justify-self: flex-start;
     align-self: flex-start;
+    max-width: 70ch;
   }
 
   #homeHead h2 {

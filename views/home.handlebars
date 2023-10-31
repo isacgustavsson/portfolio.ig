@@ -6,19 +6,16 @@
 </div>
 
 <div id="homeHead">
-  <h1>Hello.</h1>
-  <br>
+  <h1>Hello There!</h1>
   <p>
     I am a Graphic Design & Web Development student from Jönköping, Sweden.
-  </p>
-  
-  <h2>I'm glad that you're here.</h2>
-
-  <p>This website is a backend project which was built using Node.js, Express, SQLite3,
+    This website is a backend project which was built using Node.js, Express, SQLite3,
     Handlebars.js & CSS.
   </p>
 
-    <h3>Let's Talk!</h3>
+    <br> &nbsp; <br>
+
+    <h2>Let's Talk!</h2>
 
   <p>You can leave a message in the guestbook by filling out the form below. 
     The message will be posted as a comment for anyone to see! Please be kind. </p>
@@ -67,10 +64,7 @@
 <div class="commentWrapper">
 {{#each comments}}
   <div class="commentContainer">
-    <div id="namedate">
-    <h3>{{gname}}</h3>
-        <p id="date">{{gdate}}</p>
-        </div>
+    <h4>{{gname}}</h4>
 
     <p>{{gcomment}}</p>
 
@@ -81,7 +75,7 @@
           <a  href="/delete/{{gid}}" class="important">Delete.</a>
           </div>
         {{/if}}
-
+        <p id="date">{{gdate}}</p>
   </div>
 {{/each}}
 </div>
