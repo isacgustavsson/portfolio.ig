@@ -29,8 +29,9 @@ h4 {
 }
 
 h1 {
+  font-family: "Open sans", sans-serif;
   font-size: 2.125rem;
-  line-height: 2.55;
+  line-height: 1.55;
 }
 
 h2 {
@@ -40,15 +41,17 @@ h2 {
 
 h3 {
   font-size: 1.5rem;
+  line-height: 1.55;
 }
 
 h4 {
   font-size: 1.25rem;
+  line-height: 1.45;
 }
 
 p {
   font-family: "MerriWeather", serif;
-  font-size: 1rem;
+  font-size: 1.125rem;
   line-height: 1.5;
   color: #272b2b;
   max-width: 60ch;
@@ -255,17 +258,12 @@ FORM SETTINGS
   color: #2f2f2f;
 }
 
-.commentWrapper {
-  height: 100%;
-  margin: 0 auto;
-}
-
 .commentContainer {
   background-color: #6f8695;
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  margin: 1rem;
+  margin: 1.5rem;
   padding: 1rem;
 
   overflow: hidden;
@@ -288,7 +286,7 @@ FORM SETTINGS
 }
 
 .commentContainer:nth-last-child(1) {
-  margin-bottom: 15rem;
+  margin-bottom: 5rem;
 }
 
 .commentContainer #btn {
@@ -324,27 +322,42 @@ FORM SETTINGS
 }
 
 .card {
-  background-color: rgba(0, 0, 0, 0.25);
-
+  /* Add any other card styling you need */
+  max-width: 250px;
+  max-height: 250px;
+  aspect-ratio: 1 / 1;
+  background-size: cover; /* Adjust this as needed */
+  background-repeat: no-repeat;
+  background-position: center;
   display: flex;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0 auto;
+  margin-top: 5rem;
+}
+
+.card:nth-last-child(1) {
+  margin-bottom: 5rem;
+}
+
+.card:hover {
+  scale: 0.95;
+  transition: 0.05s ease-in-out;
+}
+
+.card p {
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 div[id^="work"] {
   display: flex;
-  flex-direction: column;
-  padding: 1rem;
 }
 
-div[id^="work"] img {
-  padding: 1rem;
-  max-width: 75%;
-  align-self: center;
-}
-
-a[id^="itemHead"] {
+div[id^="work"] h4 {
   align-self: center;
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 #btn {
@@ -390,6 +403,10 @@ a[id^="itemHead"] {
   margin-bottom: 10rem;
 }
 
+.box {
+  position: relative;
+}
+
 #homeHead h1 {
   margin-bottom: 0.05rem;
 }
@@ -404,12 +421,10 @@ a[id^="itemHead"] {
   margin-bottom: 1.5rem;
 }
 
-#workHead h1 {
-  align-self: center;
-}
-
 #workHead p {
-  align-self: center;
+  max-width: 55ch;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 #contactHead {
@@ -418,7 +433,10 @@ a[id^="itemHead"] {
 }
 
 #workHead {
+  margin-top: 1.5rem;
   margin-bottom: 1.5rem;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
 }
 
 #logHead {
